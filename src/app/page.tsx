@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Wallet, PieChart as PieChartIcon, List as ListIcon, Settings, Loader2 } from "lucide-react";
+import { Plus, Wallet, PieChart as PieChartIcon, List as ListIcon, Settings, Loader2, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Expense } from "@/types/expense";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseList } from "@/components/ExpenseList";
@@ -19,6 +20,7 @@ export default function Home() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBudgetOpen, setIsBudgetOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +30,11 @@ export default function Home() {
           fetch('/api/budget')
         ]);
         
+        if (expensesRes.status === 401 || budgetRes.status === 401) {
+          router.push('/login');
+          return;
+        }
+
         if (expensesRes.ok && budgetRes.ok) {
           const expensesData = await expensesRes.json();
           const budgetData = await budgetRes.json();
@@ -42,7 +49,19 @@ export default function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (res.ok) {
+        router.push('/login');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   const handleAddExpense = async (expenseData: Omit<Expense, 'id'>) => {
     try {
@@ -140,13 +159,20 @@ export default function Home() {
             <p className="text-xs font-bold text-sky-400 dark:text-sky-500 uppercase tracking-widest">Sky Ledger</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <ThemeToggle />
           <button 
             onClick={() => setIsBudgetOpen(true)}
             className="p-3 rounded-2xl bg-white dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-800 border border-sky-100 dark:border-sky-800/50 shadow-soft transition-all active:scale-95"
           >
             <Settings size={20} />
+          </button>
+          <button 
+            onClick={handleLogout}
+            className="p-3 rounded-2xl bg-white dark:bg-red-900/20 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/40 border border-red-100 dark:border-red-900/30 shadow-soft transition-all active:scale-95"
+            title="Logout"
+          >
+            <LogOut size={20} />
           </button>
         </div>
       </header>
@@ -240,7 +266,7 @@ export default function Home() {
       {/* Footer Info */}
       <footer className="mt-20 text-center pb-8">
         <p className="text-gray-400 text-sm font-medium">
-          Data is synced with MongoDB Database.
+          Cloud Secured • Private Ledger
         </p>
       </footer>
     </main>

@@ -5,9 +5,11 @@ export interface IExpense extends Document {
   category: string;
   amount: number;
   notes?: string;
+  userId: string;
 }
 
 const ExpenseSchema: Schema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   date: { type: String, required: true },
   category: { 
     type: String, 

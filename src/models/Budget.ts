@@ -2,9 +2,11 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IBudget extends Document {
   amount: number;
+  userId: string;
 }
 
 const BudgetSchema: Schema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   amount: { type: Number, required: true },
 }, {
   timestamps: true,

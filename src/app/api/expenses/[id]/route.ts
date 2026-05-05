@@ -1,19 +1,27 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Expense from '@/models/Expense';
+import { getUserIdFromToken } from '@/lib/auth';
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await dbConnect();
+    const userId = await getUserIdFromToken();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { id } = await params;
+    await dbConnect();
     const data = await request.json();
-    const expense = await Expense.findByIdAndUpdate(id, data, {
-      new: true,
-      runValidators: true,
-    });
+    
+    // Ensure the expense belongs to the user
+    const expense = await Expense.findOneAndUpdate(
+      { _id: id, userId },
+      data,
+      { new: true, runValidators: true }
+    );
+
     if (!expense) {
       return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
     }
@@ -28,9 +36,14 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await dbConnect();
+    const userId = await getUserIdFromToken();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { id } = await params;
-    const expense = await Expense.findByIdAndDelete(id);
+    await dbConnect();
+    
+    const expense = await Expense.findOneAndDelete({ _id: id, userId });
+    
     if (!expense) {
       return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
     }

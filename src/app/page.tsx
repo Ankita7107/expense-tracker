@@ -1,65 +1,165 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Plus, Wallet, PieChart as PieChartIcon, List as ListIcon, Settings } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Expense } from "@/types/expense";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { ExpenseForm } from "@/components/ExpenseForm";
+import { ExpenseList } from "@/components/ExpenseList";
+import { Dashboard } from "@/components/Dashboard";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { BudgetModal } from "@/components/BudgetModal";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const [expenses, setExpenses] = useLocalStorage<Expense[]>("expenses", []);
+  const [budget, setBudget] = useLocalStorage<number>("monthly-budget", 5000);
+  const [activeTab, setActiveTab] = useState<"dashboard" | "list">("dashboard");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isBudgetOpen, setIsBudgetOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+
+  const handleAddExpense = (expenseData: Omit<Expense, 'id'>) => {
+    const newExpense: Expense = {
+      ...expenseData,
+      id: Math.random().toString(36).substr(2, 9),
+    };
+    setExpenses([newExpense, ...expenses]);
+  };
+
+  const handleUpdateExpense = (id: string, expenseData: Omit<Expense, 'id'>) => {
+    setExpenses(expenses.map(exp => exp.id === id ? { ...expenseData, id } : exp));
+    setEditingExpense(null);
+  };
+
+  const handleDeleteExpense = (id: string) => {
+    if (confirm("Are you sure you want to delete this expense?")) {
+      setExpenses(expenses.filter(exp => exp.id !== id));
+    }
+  };
+
+  const handleEditClick = (expense: Expense) => {
+    setEditingExpense(expense);
+    setIsFormOpen(true);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="max-w-6xl mx-auto px-4 py-8 md:py-12 mb-24 md:mb-12">
+      {/* Header */}
+      <header className="flex items-center justify-between mb-12">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-sky-500 text-white rounded-2xl shadow-lg shadow-sky-500/30">
+            <Wallet size={28} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black tracking-tight text-sky-950 dark:text-sky-50">Expensy</h1>
+            <p className="text-xs font-bold text-sky-400 dark:text-sky-500 uppercase tracking-widest">Sky Ledger</p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <button 
+            onClick={() => setIsBudgetOpen(true)}
+            className="p-3 rounded-2xl bg-white dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-800 border border-sky-100 dark:border-sky-800/50 shadow-soft transition-all active:scale-95"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            <Settings size={20} />
+          </button>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <div className="flex bg-sky-100/50 dark:bg-sky-950/50 p-2 rounded-[2rem] w-fit mx-auto mb-10 border border-sky-100 dark:border-sky-900/50">
+        <button
+          onClick={() => setActiveTab("dashboard")}
+          className={cn(
+            "flex items-center gap-2 px-8 py-3.5 rounded-[1.5rem] text-sm font-black uppercase tracking-widest transition-all",
+            activeTab === "dashboard" 
+              ? "bg-white dark:bg-sky-800 text-sky-600 dark:text-sky-100 shadow-xl shadow-sky-500/10 scale-105" 
+              : "text-sky-400 hover:text-sky-600 dark:hover:text-sky-300"
+          )}
+        >
+          <PieChartIcon size={18} />
+          Stats
+        </button>
+        <button
+          onClick={() => setActiveTab("list")}
+          className={cn(
+            "flex items-center gap-2 px-8 py-3.5 rounded-[1.5rem] text-sm font-black uppercase tracking-widest transition-all",
+            activeTab === "list" 
+              ? "bg-white dark:bg-sky-800 text-sky-600 dark:text-sky-100 shadow-xl shadow-sky-500/10 scale-105" 
+              : "text-sky-400 hover:text-sky-600 dark:hover:text-sky-300"
+          )}
+        >
+          <ListIcon size={18} />
+          History
+        </button>
+      </div>
+
+      {/* Content */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          {activeTab === "dashboard" ? (
+            <Dashboard 
+              expenses={expenses} 
+              budget={budget} 
+              onEditBudget={() => setIsBudgetOpen(true)} 
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          ) : (
+            <ExpenseList 
+              expenses={expenses} 
+              onEdit={handleEditClick} 
+              onDelete={handleDeleteExpense} 
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Floating Action Button */}
+      <motion.button
+        whileHover={{ scale: 1.05, y: -5 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => {
+          setEditingExpense(null);
+          setIsFormOpen(true);
+        }}
+        className="fixed bottom-8 right-8 md:bottom-12 md:right-12 p-6 bg-sky-500 text-white rounded-[2rem] shadow-2xl shadow-sky-500/50 z-40 flex items-center gap-3 hover:bg-sky-600 transition-all border-4 border-white dark:border-sky-900"
+      >
+        <Plus size={28} />
+        <span className="font-black uppercase tracking-widest pr-2 hidden md:inline">Log Expense</span>
+      </motion.button>
+
+      {/* Modals */}
+      <ExpenseForm
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingExpense(null);
+        }}
+        onSubmit={handleAddExpense}
+        onUpdate={handleUpdateExpense}
+        editingExpense={editingExpense}
+      />
+
+      <BudgetModal
+        isOpen={isBudgetOpen}
+        onClose={() => setIsBudgetOpen(false)}
+        currentBudget={budget}
+        onSave={(amt) => setBudget(amt)}
+      />
+
+      {/* Footer Info */}
+      <footer className="mt-20 text-center pb-8">
+        <p className="text-gray-400 text-sm font-medium">
+          Data is saved locally in your browser.
+        </p>
+      </footer>
+    </main>
   );
 }

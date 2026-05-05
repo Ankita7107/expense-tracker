@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f9ff; /* sky-50 */
+  --foreground: #0c4a6e; /* sky-900 */
+  --primary: #0ea5e9;    /* sky-500 */
+  --card: #ffffff;
+  --card-foreground: #0c4a6e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #082f49; /* sky-950 */
+  --foreground: #f0f9ff; /* sky-50 */
+  --primary: #38bdf8;    /* sky-400 */
+  --card: #0c4a6e;       /* sky-900 */
+  --card-foreground: #f0f9ff;
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .glass {
+    background-color: rgb(255 255 255 / 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgb(255 255 255 / 0.3);
+  }
+
+  .dark .glass {
+    background-color: rgb(12 74 110 / 0.4);
+    border: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  .shadow-soft {
+    box-shadow: 0 10px 40px -10px rgba(14, 165, 233, 0.1);
+  }
+}
+
+/* Custom transitions for a premium feel */
+* {
+  transition-property: color, background-color, border-color, transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.3);
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.9);
 }

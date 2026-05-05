@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Wallet, PieChart as PieChartIcon, List as ListIcon, Settings } from "lucide-react";
+import { Plus, Wallet, PieChart as PieChartIcon, List as ListIcon, Settings, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Expense } from "@/types/expense";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseList } from "@/components/ExpenseList";
 import { Dashboard } from "@/components/Dashboard";
@@ -13,29 +12,102 @@ import { BudgetModal } from "@/components/BudgetModal";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const [expenses, setExpenses] = useLocalStorage<Expense[]>("expenses", []);
-  const [budget, setBudget] = useLocalStorage<number>("monthly-budget", 5000);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [budget, setBudget] = useState<number>(5000);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"dashboard" | "list">("dashboard");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBudgetOpen, setIsBudgetOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
-  const handleAddExpense = (expenseData: Omit<Expense, 'id'>) => {
-    const newExpense: Expense = {
-      ...expenseData,
-      id: Math.random().toString(36).substr(2, 9),
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [expensesRes, budgetRes] = await Promise.all([
+          fetch('/api/expenses'),
+          fetch('/api/budget')
+        ]);
+        
+        if (expensesRes.ok && budgetRes.ok) {
+          const expensesData = await expensesRes.json();
+          const budgetData = await budgetRes.json();
+          setExpenses(expensesData);
+          setBudget(budgetData.amount);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    setExpenses([newExpense, ...expenses]);
+
+    fetchData();
+  }, []);
+
+  const handleAddExpense = async (expenseData: Omit<Expense, 'id'>) => {
+    try {
+      const res = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(expenseData),
+      });
+      if (res.ok) {
+        const newExpense = await res.json();
+        setExpenses([newExpense, ...expenses]);
+        setIsFormOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to add expense:", error);
+    }
   };
 
-  const handleUpdateExpense = (id: string, expenseData: Omit<Expense, 'id'>) => {
-    setExpenses(expenses.map(exp => exp.id === id ? { ...expenseData, id } : exp));
-    setEditingExpense(null);
+  const handleUpdateExpense = async (id: string, expenseData: Omit<Expense, 'id'>) => {
+    try {
+      const res = await fetch(`/api/expenses/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(expenseData),
+      });
+      if (res.ok) {
+        const updatedExpense = await res.json();
+        setExpenses(expenses.map(exp => exp.id === id ? updatedExpense : exp));
+        setEditingExpense(null);
+        setIsFormOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to update expense:", error);
+    }
   };
 
-  const handleDeleteExpense = (id: string) => {
+  const handleDeleteExpense = async (id: string) => {
     if (confirm("Are you sure you want to delete this expense?")) {
-      setExpenses(expenses.filter(exp => exp.id !== id));
+      try {
+        const res = await fetch(`/api/expenses/${id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          setExpenses(expenses.filter(exp => exp.id !== id));
+        }
+      } catch (error) {
+        console.error("Failed to delete expense:", error);
+      }
+    }
+  };
+
+  const handleUpdateBudget = async (amount: number) => {
+    try {
+      const res = await fetch('/api/budget', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+      if (res.ok) {
+        const updatedBudget = await res.json();
+        setBudget(updatedBudget.amount);
+        setIsBudgetOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to update budget:", error);
     }
   };
 
@@ -43,6 +115,17 @@ export default function Home() {
     setEditingExpense(expense);
     setIsFormOpen(true);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-sky-50 dark:bg-sky-950">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-sky-500 animate-spin" />
+          <p className="text-sky-600 dark:text-sky-400 font-bold uppercase tracking-widest animate-pulse">Loading Ledger...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 md:py-12 mb-24 md:mb-12">
@@ -151,13 +234,13 @@ export default function Home() {
         isOpen={isBudgetOpen}
         onClose={() => setIsBudgetOpen(false)}
         currentBudget={budget}
-        onSave={(amt) => setBudget(amt)}
+        onSave={handleUpdateBudget}
       />
 
       {/* Footer Info */}
       <footer className="mt-20 text-center pb-8">
         <p className="text-gray-400 text-sm font-medium">
-          Data is saved locally in your browser.
+          Data is synced with MongoDB Database.
         </p>
       </footer>
     </main>

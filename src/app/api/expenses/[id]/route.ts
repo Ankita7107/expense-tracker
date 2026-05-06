@@ -5,14 +5,14 @@ import { getUserIdFromToken } from "@/lib/auth";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const userId = await getUserIdFromToken();
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { id } = params;
+    const { id } = await params;
     await dbConnect();
     const data = await request.json();
 
@@ -36,14 +36,14 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const userId = await getUserIdFromToken();
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { id } = params;
+    const { id } = await params;
     await dbConnect();
 
     const expense = await Expense.findOneAndDelete({ _id: id, userId });

@@ -1,12 +1,13 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import Budget from '@/models/Budget';
-import { getUserIdFromToken } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import Budget from "@/models/Budget";
+import { getUserIdFromToken } from "@/lib/auth";
 
 export async function GET() {
   try {
     const userId = await getUserIdFromToken();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await dbConnect();
     let budget = await Budget.findOne({ userId });
@@ -15,19 +16,23 @@ export async function GET() {
     }
     return NextResponse.json(budget);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch budget' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch budget" },
+      { status: 500 },
+    );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const userId = await getUserIdFromToken();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await dbConnect();
     const { amount } = await request.json();
     let budget = await Budget.findOne({ userId });
-    
+
     if (budget) {
       budget.amount = amount;
       await budget.save();
@@ -36,6 +41,9 @@ export async function POST(request: Request) {
     }
     return NextResponse.json(budget);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update budget' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Failed to update budget" },
+      { status: 400 },
+    );
   }
 }

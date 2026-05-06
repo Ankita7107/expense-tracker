@@ -1,54 +1,61 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import Expense from '@/models/Expense';
-import { getUserIdFromToken } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import Expense from "@/models/Expense";
+import { getUserIdFromToken } from "@/lib/auth";
 
 export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const userId = await getUserIdFromToken();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
     await dbConnect();
     const data = await request.json();
-    
+
     // Ensure the expense belongs to the user
-    const expense = await Expense.findOneAndUpdate(
-      { _id: id, userId },
-      data,
-      { new: true, runValidators: true }
-    );
+    const expense = await Expense.findOneAndUpdate({ _id: id, userId }, data, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!expense) {
-      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+      return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
     return NextResponse.json(expense);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update expense' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Failed to update expense" },
+      { status: 400 },
+    );
   }
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const userId = await getUserIdFromToken();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
     await dbConnect();
-    
+
     const expense = await Expense.findOneAndDelete({ _id: id, userId });
-    
+
     if (!expense) {
-      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+      return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
-    return NextResponse.json({ message: 'Expense deleted' });
+    return NextResponse.json({ message: "Expense deleted" });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete expense' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete expense" },
+      { status: 500 },
+    );
   }
 }

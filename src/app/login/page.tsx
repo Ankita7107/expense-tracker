@@ -16,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
-  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
+  const [authMode, setAuthMode] = useState<"login" | "register" | "forgot">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -35,9 +35,9 @@ export default function LoginPage() {
     setMessage("");
 
     const endpoint =
-      mode === "login"
+      authMode === "login"
         ? "/api/auth/login"
-        : mode === "register"
+        : authMode === "register"
           ? "/api/auth/register"
           : "/api/auth/forgot-password";
 
@@ -51,11 +51,11 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        if (mode === "login") {
+        if (authMode === "login") {
           router.push("/");
           router.refresh();
-        } else if (mode === "register") {
-          setMode("login");
+        } else if (authMode === "register") {
+          setAuthMode("login");
           setMessage("Account created successfully. Please login.");
         } else {
           setMessage("Reset link sent to your email.");
@@ -115,7 +115,7 @@ export default function LoginPage() {
 
           {/* Toggle */}
           <AnimatePresence mode="wait">
-            {mode !== "forgot" && (
+            {authMode !== "forgot" && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
@@ -123,9 +123,9 @@ export default function LoginPage() {
                 className="mb-6 grid grid-cols-2 rounded-xl bg-sky-50 p-1 gap-1"
               >
                 <button
-                  onClick={() => setMode("login")}
+                  onClick={() => setAuthMode("login")}
                   className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
-                    mode === "login"
+                    authMode === "login"
                       ? "bg-white text-sky-600 shadow-sm"
                       : "text-sky-400 hover:text-sky-600"
                   }`}
@@ -133,9 +133,9 @@ export default function LoginPage() {
                   Login
                 </button>
                 <button
-                  onClick={() => setMode("register")}
+                  onClick={() => setAuthMode("register")}
                   className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
-                    mode === "register"
+                    authMode === "register"
                       ? "bg-white text-sky-600 shadow-sm"
                       : "text-sky-400 hover:text-sky-600"
                   }`}
@@ -149,7 +149,7 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3">
             <AnimatePresence mode="popLayout">
-              {mode === "register" && (
+              {authMode === "register" && (
                 <motion.div
                   key="name-input"
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -164,7 +164,7 @@ export default function LoginPage() {
                   <input
                     type="text"
                     placeholder="Full name"
-                    required={mode === "register"}
+                    required={authMode === "register"}
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -191,7 +191,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {mode !== "forgot" && (
+              {authMode !== "forgot" && (
                 <motion.div
                   key="password-input"
                   initial={{ opacity: 0, height: 0 }}
@@ -206,7 +206,7 @@ export default function LoginPage() {
                   <input
                     type="password"
                     placeholder="Password"
-                    required={mode !== "forgot"}
+                    required
                     value={formData.password}
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
@@ -218,11 +218,11 @@ export default function LoginPage() {
             </AnimatePresence>
 
             {/* Forgot password link */}
-            {mode === "login" && (
+            {authMode === "login" && (
               <div className="flex justify-end px-1">
                 <button
                   type="button"
-                  onClick={() => setMode("forgot")}
+                  onClick={() => setAuthMode("forgot")}
                   className="text-xs font-medium text-sky-500 hover:text-sky-600 transition-colors"
                 >
                   Forgot password?
@@ -257,9 +257,9 @@ export default function LoginPage() {
                 <Loader2 size={18} className="animate-spin" />
               ) : (
                 <>
-                  {mode === "login"
+                  {authMode === "login"
                     ? "Sign in"
-                    : mode === "register"
+                    : authMode === "register"
                       ? "Create account"
                       : "Send reset link"}
                   <ArrowRight size={16} />
@@ -267,10 +267,10 @@ export default function LoginPage() {
               )}
             </motion.button>
 
-            {mode === "forgot" && (
+            {authMode === "forgot" && (
               <button
                 type="button"
-                onClick={() => setMode("login")}
+                onClick={() => setAuthMode("login")}
                 className="w-full text-center text-xs font-medium text-gray-400 hover:text-sky-500 transition-colors pt-2"
               >
                 Back to login

@@ -58,7 +58,9 @@ export default function LoginPage() {
           setAuthMode("login");
           setMessage("Account created successfully. Please login.");
         } else {
-          setMessage("Reset link sent to your email.");
+          setMessage(
+            `Reset link: ${data.resetUrl}`
+          );
         }
       } else {
         setError(data.error || "Something went wrong");

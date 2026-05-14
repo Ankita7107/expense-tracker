@@ -32,7 +32,10 @@ export async function POST(request: Request) {
 
     // Here you would normally send an email using Resend or Nodemailer
     
-    return NextResponse.json({ message: 'If an account exists, a reset link has been sent.' });
+    return NextResponse.json({ 
+      message: 'Reset link generated successfully.',
+      resetUrl 
+    });
   } catch (error) {
     console.error('Forgot password error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

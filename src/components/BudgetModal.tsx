@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Target } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface BudgetModalProps {
   isOpen: boolean;
@@ -12,7 +11,12 @@ interface BudgetModalProps {
   onSave: (amount: number) => void;
 }
 
-export const BudgetModal = ({ isOpen, onClose, currentBudget, onSave }: BudgetModalProps) => {
+export const BudgetModal = ({
+  isOpen,
+  onClose,
+  currentBudget,
+  onSave,
+}: BudgetModalProps) => {
   const [amount, setAmount] = useState(currentBudget.toString());
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -28,47 +32,56 @@ export const BudgetModal = ({ isOpen, onClose, currentBudget, onSave }: BudgetMo
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
           />
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-2xl"
-          >
-            <button
-              onClick={onClose}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <X size={20} />
-            </button>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl">
-                <Target size={24} />
+          {/* Modal */}
+          <motion.div
+            initial={{ scale: 0.97, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.97, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-sky-50 rounded-lg">
+                  <Target className="text-sky-500" size={17} />
+                </div>
+                <h2 className="text-base font-semibold text-gray-900">
+                  Monthly budget
+                </h2>
               </div>
-              <h2 className="text-2xl font-bold">Monthly Budget</h2>
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={18} />
+              </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Set your spending limit
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Spending limit
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-semibold text-gray-400">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400 font-medium">
                     ₹
                   </span>
                   <input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full pl-10 pr-4 py-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 text-xl font-bold"
+                    className="w-full pl-9 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-400 text-xl font-semibold text-gray-900 placeholder-gray-300 transition-all"
                     placeholder="5000"
                     required
                   />
@@ -77,9 +90,9 @@ export const BudgetModal = ({ isOpen, onClose, currentBudget, onSave }: BudgetMo
 
               <button
                 type="submit"
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+                className="w-full py-3 bg-sky-500 hover:bg-sky-600 active:scale-[0.98] text-white rounded-xl font-semibold text-sm transition-all shadow-sm shadow-sky-500/20"
               >
-                Save Budget
+                Save budget
               </button>
             </form>
           </motion.div>

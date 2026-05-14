@@ -8,8 +8,7 @@ export const ThemeToggle = () => {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    const initialColorValue = root.classList.contains("dark");
-    setIsDark(initialColorValue);
+    setIsDark(root.classList.contains("dark"));
   }, []);
 
   const toggleTheme = () => {
@@ -27,10 +26,10 @@ export const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 transition-colors"
+      className="p-2 rounded-lg bg-white border border-gray-100 text-gray-400 hover:text-sky-500 hover:border-sky-200 transition-all active:scale-95"
       aria-label="Toggle Dark Mode"
     >
-      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+      {isDark ? <Sun size={18} /> : <Moon size={18} />}
     </button>
   );
 };

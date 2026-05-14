@@ -36,9 +36,7 @@ export default function LoginPage() {
     try {
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -55,79 +53,74 @@ export default function LoginPage() {
       } else {
         setError(data.error || "Something went wrong");
       }
-    } catch (error) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-sky-100 bg-white py-3.5 pl-11 pr-4 text-slate-800 placeholder-gray-400 outline-none transition-all focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 text-sm";
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-sky-100 via-white to-cyan-100 dark:from-slate-950 dark:via-sky-950 dark:to-black flex items-center justify-center px-4 py-10">
-      {/* Background Blobs */}
-      <div className="absolute top-[-120px] left-[-120px] h-[300px] w-[300px] rounded-full bg-sky-400/30 blur-3xl" />
-      <div className="absolute bottom-[-120px] right-[-120px] h-[320px] w-[320px] rounded-full bg-cyan-400/20 blur-3xl" />
+    <div className="relative min-h-screen overflow-hidden bg-sky-50 flex items-center justify-center px-4 py-10">
+      {/* Soft background blobs */}
+      <div className="absolute top-[-100px] left-[-100px] h-[280px] w-[280px] rounded-full bg-sky-200/50 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-100px] right-[-100px] h-[280px] w-[280px] rounded-full bg-cyan-200/40 blur-3xl pointer-events-none" />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10 w-full max-w-sm"
       >
-        {/* Top Badge */}
+        {/* Badge */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex items-center justify-center"
+          transition={{ delay: 0.1 }}
+          className="mb-5 flex items-center justify-center"
         >
-          <div className="flex items-center gap-2 rounded-full border border-sky-200 dark:border-sky-800 bg-white/70 dark:bg-slate-900/60 px-4 py-2 backdrop-blur-xl shadow-lg">
-            <Sparkles className="text-sky-500" size={16} />
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-sky-700 dark:text-sky-200">
+          <div className="flex items-center gap-2 rounded-full border border-sky-200 bg-white px-4 py-1.5 shadow-sm">
+            <Sparkles className="text-sky-400" size={14} />
+            <p className="text-xs font-medium tracking-wide text-sky-600">
               Smart Expense Tracker
             </p>
           </div>
         </motion.div>
 
-        {/* Main Card */}
-        <div className="rounded-[2.5rem] border border-white/40 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl p-8 shadow-[0_20px_80px_rgba(14,165,233,0.15)]">
+        {/* Card */}
+        <div className="rounded-2xl border border-sky-100 bg-white p-8 shadow-sm">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <motion.div
-              whileHover={{ scale: 1.08, rotate: 4 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-sky-500 to-cyan-400 text-white shadow-2xl shadow-sky-500/40"
-            >
-              <Wallet size={42} />
-            </motion.div>
-
-            <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-              Expensy
-            </h1>
-
-            <p className="mt-3 text-sm font-semibold uppercase tracking-[0.35em] text-sky-500 dark:text-sky-300">
+          <div className="text-center mb-7">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-500 text-white shadow-md shadow-sky-500/20">
+              <Wallet size={30} />
+            </div>
+            <h1 className="text-2xl font-semibold text-slate-900">Expensy</h1>
+            <p className="mt-1 text-xs font-medium tracking-widest text-sky-400 uppercase">
               Finance Made Beautiful
             </p>
           </div>
 
           {/* Toggle */}
-          <div className="mb-8 grid grid-cols-2 rounded-2xl bg-sky-50 dark:bg-slate-950/50 p-1.5">
+          <div className="mb-6 grid grid-cols-2 rounded-xl bg-sky-50 p-1 gap-1">
             <button
               onClick={() => setIsLogin(true)}
-              className={`rounded-2xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${
+              className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
                 isLogin
-                  ? "bg-white dark:bg-slate-800 text-sky-600 shadow-lg"
-                  : "text-sky-400"
+                  ? "bg-white text-sky-600 shadow-sm"
+                  : "text-sky-400 hover:text-sky-600"
               }`}
             >
               Login
             </button>
-
             <button
               onClick={() => setIsLogin(false)}
-              className={`rounded-2xl py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 ${
+              className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
                 !isLogin
-                  ? "bg-white dark:bg-slate-800 text-sky-600 shadow-lg"
-                  : "text-sky-400"
+                  ? "bg-white text-sky-600 shadow-sm"
+                  : "text-sky-400 hover:text-sky-600"
               }`}
             >
               Register
@@ -135,7 +128,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <AnimatePresence>
               {!isLogin && (
                 <motion.div
@@ -145,50 +138,45 @@ export default function LoginPage() {
                   className="relative overflow-hidden"
                 >
                   <User
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-sky-400"
-                    size={20}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
+                    size={16}
                   />
-
                   <input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Full name"
                     required={!isLogin}
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full rounded-2xl border border-sky-100 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 py-4 pl-12 pr-4 text-slate-800 dark:text-white outline-none transition-all focus:border-sky-400 focus:ring-4 focus:ring-sky-400/20"
+                    className={inputClass}
                   />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Email */}
             <div className="relative">
               <Mail
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-sky-400"
-                size={20}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
+                size={16}
               />
-
               <input
                 type="email"
-                placeholder="Email Address"
+                placeholder="Email address"
                 required
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full rounded-2xl border border-sky-100 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 py-4 pl-12 pr-4 text-slate-800 dark:text-white outline-none transition-all focus:border-sky-400 focus:ring-4 focus:ring-sky-400/20"
+                className={inputClass}
               />
             </div>
 
-            {/* Password */}
             <div className="relative">
               <Lock
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-sky-400"
-                size={20}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
+                size={16}
               />
-
               <input
                 type="password"
                 placeholder="Password"
@@ -197,44 +185,43 @@ export default function LoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full rounded-2xl border border-sky-100 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 py-4 pl-12 pr-4 text-slate-800 dark:text-white outline-none transition-all focus:border-sky-400 focus:ring-4 focus:ring-sky-400/20"
+                className={inputClass}
               />
             </div>
 
             {/* Error */}
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-semibold text-red-500 dark:border-red-900 dark:bg-red-950/20"
+                className="rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 text-center text-xs font-medium text-red-500"
               >
                 {error}
               </motion.div>
             )}
 
-            {/* Button */}
+            {/* Submit */}
             <motion.button
-              whileTap={{ scale: 0.97 }}
-              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-400 py-5 text-sm font-black uppercase tracking-[0.25em] text-white shadow-2xl shadow-sky-500/30 transition-all disabled:opacity-70"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 py-3.5 text-sm font-semibold text-white shadow-sm shadow-sky-500/20 transition-all disabled:opacity-60 mt-1"
             >
               {loading ? (
-                <Loader2 className="animate-spin" />
+                <Loader2 size={18} className="animate-spin" />
               ) : (
                 <>
-                  {isLogin ? "Sign In" : "Create Account"}
-                  <ArrowRight size={20} />
+                  {isLogin ? "Sign in" : "Create account"}
+                  <ArrowRight size={16} />
                 </>
               )}
             </motion.button>
           </form>
 
-          {/* Bottom */}
-          <div className="mt-8 flex items-center justify-center gap-2 text-sm text-sky-500 dark:text-sky-300">
-            <ShieldCheck size={18} />
-            <span className="font-medium">End-to-End Encrypted & Secure</span>
+          {/* Footer */}
+          <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-sky-400">
+            <ShieldCheck size={14} />
+            <span>End-to-end encrypted & secure</span>
           </div>
         </div>
       </motion.div>

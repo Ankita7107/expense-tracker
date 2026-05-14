@@ -238,13 +238,27 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={cn(
-                  "rounded-xl border px-4 py-2.5 text-center text-xs font-medium",
+                  "rounded-xl border px-4 py-2.5 text-center text-xs font-medium break-all",
                   error
                     ? "border-red-100 bg-red-50 text-red-500"
                     : "border-emerald-100 bg-emerald-50 text-emerald-600",
                 )}
               >
-                {error || message}
+                {message.startsWith("Reset link:") ? (
+                  <>
+                    Password reset link generated: <br />
+                    <a 
+                      href={message.replace("Reset link: ", "")} 
+                      className="text-sky-500 hover:underline font-bold"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Click here to reset
+                    </a>
+                  </>
+                ) : (
+                  error || message
+                )}
               </motion.div>
             )}
 

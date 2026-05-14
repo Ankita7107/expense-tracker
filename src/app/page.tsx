@@ -169,7 +169,7 @@ export default function Home() {
             <h1 className="text-lg font-semibold text-gray-900 leading-tight">
               Expensy
             </h1>
-            <p className="text-xs text-gray-400">Sky Ledger</p>
+            <p className="text-xs text-gray-400"></p>
           </div>
         </div>
 
@@ -277,7 +277,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-16 text-center pb-4">
-        <p className="text-xs text-gray-400">Cloud Secured • Private Ledger</p>
+        <p className="text-xs text-gray-400"></p>
       </footer>
     </main>
   );

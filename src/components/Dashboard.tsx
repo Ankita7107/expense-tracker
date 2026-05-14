@@ -199,18 +199,18 @@ export const Dashboard = ({
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.24 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-90 flex flex-col"
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-[400px] flex flex-col"
         >
           <h3 className="text-base font-semibold text-gray-900 mb-6">
             Category mix
           </h3>
-          <div className="flex-1 w-full">
-            {chartData.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-sm text-gray-400">
-                No data yet
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%" minHeight={240}>
+            <div className="flex-1 w-full" style={{ minHeight: '300px' }}>
+              {chartData.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-sm text-gray-400">
+                  No data yet
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={chartData}
                   layout="vertical"
@@ -271,11 +271,11 @@ export const Dashboard = ({
           <h3 className="text-base font-semibold text-gray-900 mb-6">
             Budget split
           </h3>
-          <div className="flex-1 w-full flex items-center justify-center relative">
-            {chartData.length === 0 ? (
-              <span className="text-sm text-gray-400">No data yet</span>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%" minHeight={240}>
+            <div className="flex-1 w-full flex items-center justify-center relative" style={{ minHeight: '300px' }}>
+              {chartData.length === 0 ? (
+                <span className="text-sm text-gray-400">No data yet</span>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
                     data={chartData}

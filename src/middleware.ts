@@ -6,7 +6,7 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "fallback-secret",
 );
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPublicPath = path === "/login";
   const token = request.cookies.get("token")?.value || "";

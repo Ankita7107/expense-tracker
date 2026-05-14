@@ -13,6 +13,7 @@ import {
   Sparkles,
   ShieldCheck,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");

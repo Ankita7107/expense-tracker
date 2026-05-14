@@ -23,7 +23,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = await new SignJWT({ userId: user._id.toString() })
+    // Auto-promote specific email to admin
+    if (user.email === 'ankitagholap100@gmail.com' && user.role !== 'admin') {
+      user.role = 'admin';
+      await user.save();
+    }
+
+    const token = await new SignJWT({ 
+      userId: user._id.toString(),
+      role: user.role 
+    })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('7d')
       .sign(JWT_SECRET);

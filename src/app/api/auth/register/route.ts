@@ -13,7 +13,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 });
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ 
+      name, 
+      email, 
+      password,
+      role: email === 'ankitagholap100@gmail.com' ? 'admin' : 'user'
+    });
     return NextResponse.json({ message: 'User registered successfully', user: { id: user._id, name: user.name, email: user.email } }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to register user' }, { status: 500 });

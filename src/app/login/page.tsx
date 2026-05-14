@@ -15,9 +15,10 @@ import {
 } from "lucide-react";
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -30,8 +31,14 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setMessage("");
 
-    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+    const endpoint =
+      mode === "login"
+        ? "/api/auth/login"
+        : mode === "register"
+          ? "/api/auth/register"
+          : "/api/auth/forgot-password";
 
     try {
       const res = await fetch(endpoint, {
@@ -43,12 +50,14 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        if (isLogin) {
+        if (mode === "login") {
           router.push("/");
           router.refresh();
+        } else if (mode === "register") {
+          setMode("login");
+          setMessage("Account created successfully. Please login.");
         } else {
-          setIsLogin(true);
-          setError("Account created successfully. Please login.");
+          setMessage("Reset link sent to your email.");
         }
       } else {
         setError(data.error || "Something went wrong");
@@ -104,37 +113,47 @@ export default function LoginPage() {
           </div>
 
           {/* Toggle */}
-          <div className="mb-6 grid grid-cols-2 rounded-xl bg-sky-50 p-1 gap-1">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
-                isLogin
-                  ? "bg-white text-sky-600 shadow-sm"
-                  : "text-sky-400 hover:text-sky-600"
-              }`}
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
-                !isLogin
-                  ? "bg-white text-sky-600 shadow-sm"
-                  : "text-sky-400 hover:text-sky-600"
-              }`}
-            >
-              Register
-            </button>
-          </div>
+          <AnimatePresence mode="wait">
+            {mode !== "forgot" && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 grid grid-cols-2 rounded-xl bg-sky-50 p-1 gap-1"
+              >
+                <button
+                  onClick={() => setMode("login")}
+                  className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
+                    mode === "login"
+                      ? "bg-white text-sky-600 shadow-sm"
+                      : "text-sky-400 hover:text-sky-600"
+                  }`}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setMode("register")}
+                  className={`rounded-lg py-2.5 text-sm font-medium transition-all ${
+                    mode === "register"
+                      ? "bg-white text-sky-600 shadow-sm"
+                      : "text-sky-400 hover:text-sky-600"
+                  }`}
+                >
+                  Register
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3">
-            <AnimatePresence>
-              {!isLogin && (
+            <AnimatePresence mode="popLayout">
+              {mode === "register" && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
+                  key="name-input"
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 12 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                   className="relative overflow-hidden"
                 >
                   <User
@@ -144,7 +163,7 @@ export default function LoginPage() {
                   <input
                     type="text"
                     placeholder="Full name"
-                    required={!isLogin}
+                    required={mode === "register"}
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -153,50 +172,76 @@ export default function LoginPage() {
                   />
                 </motion.div>
               )}
+
+              <div className="relative">
+                <Mail
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
+                  size={16}
+                />
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  required
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className={inputClass}
+                />
+              </div>
+
+              {mode !== "forgot" && (
+                <motion.div
+                  key="password-input"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="relative"
+                >
+                  <Lock
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
+                    size={16}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    required={mode !== "forgot"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className={inputClass}
+                  />
+                </motion.div>
+              )}
             </AnimatePresence>
 
-            <div className="relative">
-              <Mail
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
-                size={16}
-              />
-              <input
-                type="email"
-                placeholder="Email address"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className={inputClass}
-              />
-            </div>
+            {/* Forgot password link */}
+            {mode === "login" && (
+              <div className="flex justify-end px-1">
+                <button
+                  type="button"
+                  onClick={() => setMode("forgot")}
+                  className="text-xs font-medium text-sky-500 hover:text-sky-600 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
 
-            <div className="relative">
-              <Lock
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-400"
-                size={16}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className={inputClass}
-              />
-            </div>
-
-            {/* Error */}
-            {error && (
+            {/* Error/Message */}
+            {(error || message) && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 text-center text-xs font-medium text-red-500"
+                className={cn(
+                  "rounded-xl border px-4 py-2.5 text-center text-xs font-medium",
+                  error
+                    ? "border-red-100 bg-red-50 text-red-500"
+                    : "border-emerald-100 bg-emerald-50 text-emerald-600",
+                )}
               >
-                {error}
+                {error || message}
               </motion.div>
             )}
 
@@ -211,11 +256,25 @@ export default function LoginPage() {
                 <Loader2 size={18} className="animate-spin" />
               ) : (
                 <>
-                  {isLogin ? "Sign in" : "Create account"}
+                  {mode === "login"
+                    ? "Sign in"
+                    : mode === "register"
+                      ? "Create account"
+                      : "Send reset link"}
                   <ArrowRight size={16} />
                 </>
               )}
             </motion.button>
+
+            {mode === "forgot" && (
+              <button
+                type="button"
+                onClick={() => setMode("login")}
+                className="w-full text-center text-xs font-medium text-gray-400 hover:text-sky-500 transition-colors pt-2"
+              >
+                Back to login
+              </button>
+            )}
           </form>
 
           {/* Footer */}

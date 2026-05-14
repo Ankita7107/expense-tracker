@@ -153,7 +153,7 @@ export const ExpenseList = ({
                     </td>
 
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-400 line-clamp-1 max-w-[200px]">
+                      <span className="text-sm text-gray-400 line-clamp-1 max-w-50">
                         {expense.notes || "—"}
                       </span>
                     </td>

@@ -203,7 +203,7 @@ export const ExpenseForm = ({
                     }
                     className={cn(
                       inputClass,
-                      "pl-10 pr-4 py-2.5 text-sm min-h-[88px] resize-none",
+                      "pl-10 pr-4 py-2.5 text-sm min-h-22 resize-none",
                     )}
                     placeholder="Add a note..."
                   />

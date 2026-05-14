@@ -66,8 +66,8 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-sky-50 flex items-center justify-center px-4 py-10">
       {/* Soft background blobs */}
-      <div className="absolute top-[-100px] left-[-100px] h-[280px] w-[280px] rounded-full bg-sky-200/50 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-100px] right-[-100px] h-[280px] w-[280px] rounded-full bg-cyan-200/40 blur-3xl pointer-events-none" />
+      <div className="absolute -top-25 -left-25 h-70 w-70 rounded-full bg-sky-200/50 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-25 -right-25 h-70 w-70 rounded-full bg-cyan-200/40 blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

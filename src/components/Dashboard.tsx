@@ -48,6 +48,9 @@ export const Dashboard = ({
 }: DashboardProps) => {
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
+  const currentMonthName = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+  }).format(new Date());
 
   const monthlyExpenses = useMemo(
     () =>
@@ -102,7 +105,7 @@ export const Dashboard = ({
             </div>
             <span className="flex items-center gap-1 text-xs font-medium text-gray-400">
               <Calendar size={12} />
-              {new Date().toLocaleString("default", { month: "long" })}
+              {currentMonthName}
             </span>
           </div>
           <p className="text-sm text-gray-500 mb-1">Monthly spending</p>
@@ -196,7 +199,7 @@ export const Dashboard = ({
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.24 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-[360px] flex flex-col"
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-90 flex flex-col"
         >
           <h3 className="text-base font-semibold text-gray-900 mb-6">
             Category mix
@@ -207,7 +210,7 @@ export const Dashboard = ({
                 No data yet
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={240}>
                 <BarChart
                   data={chartData}
                   layout="vertical"
@@ -263,7 +266,7 @@ export const Dashboard = ({
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.32 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-[360px] flex flex-col"
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-90 flex flex-col"
         >
           <h3 className="text-base font-semibold text-gray-900 mb-6">
             Budget split
@@ -272,7 +275,7 @@ export const Dashboard = ({
             {chartData.length === 0 ? (
               <span className="text-sm text-gray-400">No data yet</span>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={240}>
                 <PieChart>
                   <Pie
                     data={chartData}

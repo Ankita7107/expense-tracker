@@ -224,7 +224,9 @@ export const Dashboard = ({
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between"
+          whileHover={{ y: -4, boxShadow: "0 12px 24px -8px rgba(0, 0, 0, 0.08)" }}
+          transition={{ duration: 0.2 }}
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between transition-shadow"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -265,8 +267,9 @@ export const Dashboard = ({
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between"
+          whileHover={{ y: -4, boxShadow: "0 12px 24px -8px rgba(0, 0, 0, 0.08)" }}
+          transition={{ delay: 0.08, duration: 0.2 }}
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between transition-shadow"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -320,8 +323,9 @@ export const Dashboard = ({
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.16 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between"
+          whileHover={{ y: -4, boxShadow: "0 12px 24px -8px rgba(0, 0, 0, 0.08)" }}
+          transition={{ delay: 0.16, duration: 0.2 }}
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between transition-shadow"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -349,8 +353,9 @@ export const Dashboard = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.24 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-[400px] flex flex-col"
+          whileHover={{ scale: 1.01, boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.1)" }}
+          transition={{ delay: 0.24, duration: 0.3 }}
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-[400px] flex flex-col transition-shadow"
         >
           <h3 className="text-base font-semibold text-gray-900 mb-6">
             Category mix
@@ -416,8 +421,9 @@ export const Dashboard = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.32 }}
-          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-90 flex flex-col"
+          whileHover={{ scale: 1.01, boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.1)" }}
+          transition={{ delay: 0.32, duration: 0.3 }}
+          className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm min-h-90 flex flex-col transition-shadow"
         >
           <h3 className="text-base font-semibold text-gray-900 mb-6">
             Budget split

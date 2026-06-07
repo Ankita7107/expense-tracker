@@ -21,6 +21,7 @@ const CATEGORIES: Category[] = [
   "Extra Travelling",
   "Vegetables",
   "Outside Food",
+  "Other",
 ];
 
 const inputClass =

@@ -314,17 +314,6 @@ export const Dashboard = ({
               />
             </div>
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-xs text-gray-500">
-            <span>{prevMonthInfo.label} spent:</span>
-            <div className="flex items-center gap-1">
-              <span className="font-semibold text-gray-700">
-                {formatCurrency(totalPrevMonth)}
-              </span>
-              <span className="text-gray-400">
-                ({budget > 0 ? Math.round((totalPrevMonth / budget) * 100) : 0}%)
-              </span>
-            </div>
-          </div>
         </motion.div>
 
         {/* Top Category */}

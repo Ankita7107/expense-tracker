@@ -22,6 +22,7 @@ const ExpenseSchema: Schema = new Schema(
         "Extra Travelling",
         "Vegetables",
         "Outside Food",
+        "Other",
       ],
     },
     amount: { type: Number, required: true },

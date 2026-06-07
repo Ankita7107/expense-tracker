@@ -4,7 +4,8 @@ export type Category =
   | 'Daily Travelling' 
   | 'Extra Travelling' 
   | 'Vegetables' 
-  | 'Outside Food';
+  | 'Outside Food'
+  | 'Other';
 
 export interface Expense {
   id: string;

@@ -45,4 +45,5 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   "Extra Travelling": "bg-indigo-100 text-indigo-600",
   Vegetables: "bg-emerald-100 text-emerald-600",
   "Outside Food": "bg-amber-100 text-amber-600",
+  Other: "bg-gray-100 text-gray-600",
 };
